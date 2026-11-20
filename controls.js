@@ -4,6 +4,13 @@ export function setupControls({ onViewChange, onParamChange, onSimChange, onScal
         if (label) label.textContent = value;
     };
 
+    const PRESETS = {
+        classic:   { sigma: 10, rho: 28,    beta: 8 / 3 },
+        wide:      { sigma: 10, rho: 45,    beta: 8 / 3 },
+        wolf:      { sigma: 16, rho: 45.92, beta: 4     },
+        transient: { sigma: 10, rho: 24.5,  beta: 8 / 3 },
+    };
+
     const viewAxes = [
         { id: "view-x", axis: "da" },
         { id: "view-y", axis: "db" },
@@ -37,6 +44,27 @@ export function setupControls({ onViewChange, onParamChange, onSimChange, onScal
 
         return initial;
     };
+
+    document.querySelectorAll("[data-preset]").forEach(btn => {
+        btn.onclick = () => {
+            const preset = PRESETS[btn.dataset.preset];
+            if (!preset) return;
+
+            // Update each slider's value, its text readout, and notify main.js
+            const mapping = [
+                ["lorenz-sigma", "sigma", preset.sigma],
+                ["lorenz-rho",   "rho",   preset.rho],
+                ["lorenz-beta",  "beta",  preset.beta],
+            ];
+
+            mapping.forEach(([id, key, val]) => {
+                const slider = document.getElementById(id);
+                slider.value = Math.round(val * 1000);
+                updateLabel(id, Number(val.toFixed(3)));
+                onParamChange(key, val);
+            });
+        };
+    });
 
     return {
         sigma: bindSlider("lorenz-sigma", 1000, val => onParamChange("sigma", val)),
