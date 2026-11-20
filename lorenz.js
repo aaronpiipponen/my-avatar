@@ -1,13 +1,13 @@
 import { Vector3D } from './math3d.js';
 
 export function lorentzPoints(s, r, b, dt, interval) {
-    let t = interval[0];
+    let t = -500;
     let x = 1;
     let y = 1;
     let z = 1;
-    let points = [new Vector3D(x,y,z)];
+    let points = [];
 
-    while(t < interval[1]) {
+    while(t < 500) {
 
         let dx = (s*(y - x)) * dt;
         let dy = (x*(r - z) - y) * dt;
@@ -17,7 +17,10 @@ export function lorentzPoints(s, r, b, dt, interval) {
         y += dy;
         z += dz;
 
-        points.push(new Vector3D(x,y,z));
+        if(t >= interval[0] && t <= interval[1])
+        {
+            points.push(new Vector3D(x,y,z));
+        }
         
         t += dt;
     }
