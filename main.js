@@ -1,6 +1,6 @@
 import { Vector3D, projectPointToPlane } from './math3d.js';
 import { lorentzPoints } from './lorenz.js';
-import { centerScaleStartPoint, drawCatmullRomSpline } from './renderer.js';
+import { centerScaleRender, drawCatmullRomSpline } from './renderer.js';
 
 // DOM
 const tdirection = document.getElementById("tdirection");
@@ -40,7 +40,7 @@ function draw() {
                                 Math.sin(p));
                         
     let points2D = points3D.map(p => projectPointToPlane(p, dir_vec));
-    points2D = centerScaleStartPoint(points2D, 300, 150, 3);
+    points2D = centerScaleRender(points2D, 300, 150, 3);
 
     drawCatmullRomSpline(ctx, points2D, stroke_count);;
 }

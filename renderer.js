@@ -46,14 +46,20 @@ export function drawCatmullRomSpline(ctx, points, stroke_count) {
 
 }
 
-export function centerScaleStartPoint(points, startX, startY, scale) {
+export function centerScaleRender(points, centerX, centerY, scale) {
 
     // Scale
-    points = points.map(p => ({x: p.x*scale, y:p.y*scale}));
+    points = points.map(p => ({x: p.x*scale, y: p.y*scale}));
 
     // Translate
-    let dx = points[0].x - startX;
-    let dy = points[0].y - startY;
+    const mean = (points => {
+        let x_total = 0;
+        let y_total = 0;
+        points.forEach(p => {x_total += p.x; y_total += p.y});
+        return {x: x_total/points.length, y: y_total/points.length};
+    })(points);
 
-    return points.map(p => ({x: p.x - dx, y: p.y - dy}));
+    console.log(mean);
+
+    return points.map(p => ({x: p.x - mean.x + centerX, y: p.y - mean.y + centerY}));
 }
