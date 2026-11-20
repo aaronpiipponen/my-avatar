@@ -66,18 +66,26 @@ export function centerScaleRender(points, centerX, centerY, scale) {
     return points.map(p => ({x: p.x - mean.x + centerX, y: p.y - mean.y + centerY}));
 }
 
-export function updateViewAngle(da, db, u, v, n) 
+export function updateViewAngle(da, db, dc, u, v, n) 
 {
     if (da !== 0) {
         const u_new = u.multiply(Math.cos(da)).add(n.multiply(-Math.sin(da)));
         const n_new = u.multiply(Math.sin(da)).add(n.multiply(Math.cos(da)));
         u = u_new;
         n = n_new;
-    } else {
+    }  
+    if (db !== 0) {
         const v_new = v.multiply(Math.cos(db)).add(n.multiply(-Math.sin(db)));
         const n_new = v.multiply(Math.sin(db)).add(n.multiply(Math.cos(db)));
         v = v_new;
         n = n_new;
     }
+    if (dc !== 0) {
+        const u_new = u.multiply(Math.cos(dc)).add(v.multiply(Math.sin(dc)));
+        const v_new = u.multiply(-Math.sin(dc)).add(v.multiply(Math.cos(dc)));
+        u = u_new;
+        v = v_new;
+    }
+    
     return { u, v, n };
 }

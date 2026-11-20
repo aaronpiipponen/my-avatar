@@ -1,65 +1,73 @@
 import { Vector3D, projectPointToPlane } from './math3d.js';
 import { lorentzPoints } from './lorenz.js';
 import { centerScaleRender, drawCatmullRomSpline, updateViewAngle } from './renderer.js';
+import { setupControls } from './controls.js';
 
-// DOM
-const xdirection = document.getElementById("xdirection");
-const ydirection = document.getElementById("ydirection");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// View controls
-let prev_x = Number(xdirection.value);
-let prev_y = Number(ydirection.value);
-let u = new Vector3D(1, 0, 0);
+// View state
+let u = new Vector3D(0, 0, 1);
 let v = new Vector3D(0, 1, 0);
-let n = new Vector3D(0, 0, 1);
-let sensitivity = 0.1;
+let n = new Vector3D(1, 0, 0);
+const sensitivity = 0.05;
+const strokeCount = 500;
 
-// Lorenz system parameters
-let sigma = 10;
-let rho = 28;
-let beta = 8/3;
+let points3D = [];
 
-// Lorenz simulation parameters
-let timestep = 0.01;
-let timeinterval = [0, 100];
+// Simulation and Lorenz parameters
+const params = setupControls({
+    onViewChange(axis, delta) {
+        const d = delta * sensitivity;
+        const da = axis === "da" ? d : 0;
+        const db = axis === "db" ? d : 0;
+        const dc = axis === "dc" ? d : 0;
 
-// Stroke count for canvas
-let stroke_count = 500;
-
-let points3D = lorentzPoints(sigma, rho, beta, timestep, timeinterval);
+        ({ u, v, n } = updateViewAngle(da, db, dc, u, v, n));
+        draw();
+    },
+    onParamChange(key, value) {
+        params[key] = value;
+        updateLorenz();
+        draw();
+    },
+    onSimChange(key, value) {
+        params[key] = value;
+        updateLorenz();
+        draw();
+    },
+    onScaleChange(value) {
+        params["scale"] = value;
+        draw();
+    }
+});
 
 function updateLorenz() {
-    points3D = lorentzPoints(sigma, rho, beta, timestep, timeinterval);
+    if (params.step <= 0 || params.stop <= params.start) {
+        points3D = [];
+        return;
+    }
+
+    points3D = lorentzPoints(
+        params.sigma,
+        params.rho,
+        params.beta,
+        params.step,
+        [params.start, params.stop]
+    );
 }
 
 function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.clearRect(0,0,600,300)
-                        
+    if (points3D.length < 3) return;
+
     let points2D = points3D.map(p => projectPointToPlane(p, u, v));
-    points2D = centerScaleRender(points2D, 300, 150, 3);
+    points2D = centerScaleRender(points2D, canvas.width / 2, canvas.height / 2, params.scale);
 
-    drawCatmullRomSpline(ctx, points2D, stroke_count);
+    drawCatmullRomSpline(ctx, points2D, strokeCount);
 }
+
+// Initial simulation and render
+updateLorenz();
 draw();
-
-// Event listeners
-xdirection.oninput = () => {
-    const x = Number(xdirection.value);
-    const da = (x - prev_x) * sensitivity;
-    prev_x = x;
-
-    ({u, v, n} = updateViewAngle(da, 0, u, v, n));
-    draw();
-}
-
-ydirection.oninput = () => {
-    const y = Number(ydirection.value);
-    const db = (y - prev_y) * sensitivity;
-    prev_y = y;
-
-    ({u, v, n} = updateViewAngle(0, db, u, v, n));
-    draw();
-}

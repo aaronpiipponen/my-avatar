@@ -2,20 +2,80 @@
 <html lang="en">
 <head>
    <title>Lorenz attractor</title>
-   <style>
-      canvas {
-         border: 2px solid #333;
-         display: block;
-         margin: 20px auto;
-      }
-   </style>
    <script type="module" src="./main.js"></script>
+   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-   <canvas id="canvas" width="600" height="300"></canvas>
+   <canvas id="canvas" width="1200" height="600"></canvas>
 
-    <input type="range" min="-100" max="100" value="0" class="slider" id="xdirection">
-    <input type="range" min="-100" max="100" value="0" class="slider" id="ydirection">
+   <div class="row">
+      <div class="column">
+         <table>
+            <tr><th colspan="3">View controls</th></tr>
+            <tr>
+               <td>X-axis</td>
+               <td><input type="range" min="-100" max="100" value="0" class="slider" id="view-x"></td>
+               <td><span id="view-x-val">0</span></td>
+            </tr>
+            <tr>
+               <td>Y-axis</td>
+               <td><input type="range" min="-100" max="100" value="0" class="slider" id="view-y"></td>
+               <td><span id="view-y-val">0</span></td>
+            </tr>
+            <tr>
+               <td>Z-axis</td>
+               <td><input type="range" min="-100" max="100" value="0" class="slider" id="view-z"></td>
+               <td><span id="view-z-val">0</span></td>
+            </tr>
+            <tr>
+               <td>Scale</td>
+               <td><input type="range" min="0" max="50" value="10" class="slider" id="view-scale"></td>
+               <td><span id="view-scale-val">0</span></td>
+            </tr>
+         </table>
+      </div>
 
+      <div class="column">
+         <table>
+            <tr><th colspan="3">Lorenz system controls</th></tr>
+            <tr>
+               <td>σ (sigma)</td>
+               <td><input type="range" min="-100000" max="100000" value="10000" class="slider" id="lorenz-sigma"></td>
+               <td><span id="lorenz-sigma-val">10</span></td>
+            </tr>
+            <tr>
+               <td>ρ (rho)</td>
+               <td><input type="range" min="-100000" max="100000" value="28000" class="slider" id="lorenz-rho"></td>
+               <td><span id="lorenz-rho-val">28</span></td>
+            </tr>
+            <tr>
+               <td>β (beta)</td>
+               <td><input type="range" min="-100000" max="100000" value="2667" class="slider" id="lorenz-beta"></td>
+               <td><span id="lorenz-beta-val">2.667</span></td>
+            </tr>
+         </table>
+      </div>
+
+      <div class="column">
+         <table>
+            <tr><th colspan="3">Simulation controls</th></tr>
+            <tr>
+               <td>Timestep size</td>
+               <td><input type="range" min="1" max="1000" value="100" class="slider" id="sim-step"></td>
+               <td><span id="sim-step-val">0.01</span></td>
+            </tr>
+            <tr>
+               <td>Time interval start</td>
+               <td><input type="range" min="-1000" max="1000" value="0" class="slider" id="sim-start"></td>
+               <td><span id="sim-start-val">0</span></td>
+            </tr>
+            <tr>
+               <td>Time interval stop</td>
+               <td><input type="range" min="-5000" max="5000" value="1000" class="slider" id="sim-stop"></td>
+               <td><span id="sim-stop-val">100</span></td>
+            </tr>
+         </table>
+      </div>
+   </div>
 </body>
 </html>
