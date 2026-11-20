@@ -13,8 +13,32 @@
 <body>
    <canvas id="canvas" width="600" height="300"></canvas>
 
+    <input type="range" min="0" max="380" value="0" class="slider" id="tdirection">
+    <input type="range" min="0" max="180" value="90" class="slider" id="pdirection">
+
    <script>
-    class Point {
+
+    let tdirection = document.getElementById("tdirection");
+    let pdirection = document.getElementById("pdirection");
+
+    let t = 0;
+    let p = 0;
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    tdirection.oninput = () => {
+        t = tdirection.value * Math.PI / 180;
+        draw();
+    }
+
+    pdirection.oninput = () => {
+        console.log(this.value);
+        p = pdirection.value * Math.PI / 180;
+        draw();
+    }
+
+    class Vector3D {
         constructor(x, y, z) {
             this.x = x;
             this.y = y;
@@ -22,8 +46,13 @@
         }
     }
 
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+    class Matrix33 {
+        constructor(a,b,c) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+        }
+    }
 
     function drawCatmullRomSpline(points) {
         if (points.length < 3) return;
@@ -52,25 +81,12 @@
         ctx.stroke();
     }
 
-    function drawPoints(points) {
-        points.forEach((point, index) => {
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
-            ctx.fillStyle = "#FF9800";
-            ctx.fill();
-            
-            ctx.fillStyle = "#000";
-            ctx.font = "12px Arial";
-            ctx.fillText(`P${index}`, point.x + 8, point.y - 8);
-        });
-    }
-
-    function lorentzPoints(s, r, b, dt, interval, startX, startY, startZ, scale) {
+    function lorentzPoints(s, r, b, dt, interval, scale) {
         let t = interval[0];
-        let x = startX*scale;
-        let y = startY*scale;
-        let z = startZ*scale;
-        let points = [new Point(x+startX,y+startY,z+startZ)];
+        let x = scale;
+        let y = scale;
+        let z = scale;
+        let points = [new Vector3D(x,y,z)];
 
         while(t < interval[1]) {
 
@@ -82,7 +98,7 @@
             y += dy;
             z += dz;
 
-            points.push(new Point(x+startX,y+startY,z+startZ));
+            points.push(new Vector3D(x,y,z));
             
             t += dt;
         }
@@ -90,24 +106,58 @@
         return points;
     }
 
-    function projectPointToPlane(p, vec1, vec2) {
-        const dotp = vec1.x*vec2.x + vec1.y*vec2.y + vec1.z + vec2.z;
-        const vec1_length = Math.sqrt(vec1.x^2 + vec1.y^2 + vec1.z^2);
-        const vec2_length = Math.sqrt(vec2.x^2 + vec2.y^2 + vec2.z^2);
-        if (dotp == vec1_length + vec2_length) return;
-
-        // Currently just the xy plane always
-        return {x: p.x, y: p.y};
-
-        // TODO: general projection
+    function dotProduct3D(u, v) {
+        return u.x*v.x + u.y*v.y + u.z + v.z;
     }
 
-    points3D = lorentzPoints(10, 28, 8/3, 0.01, [0, 10], 100, 100, 100, 0.35);
-    points2D = points3D.map(p => projectPointToPlane(p, new Point(0,0,0), new Point(0,0,0)));
-    console.log(points2D);
+    function normalizeVector3D(u) {
+        const norm = Math.sqrt(dotProduct3D(u,u));
+        return new Vector3D(u.x/norm, u.y/norm, u.z/norm);
+    }
 
-    drawCatmullRomSpline(points2D);
-    // drawPoints(points);
+    function projectPointToPlane(p, n) {
+
+        n = normalizeVector3D(n);
+
+        // Project point to plane
+        const cos_n = dotProduct3D(p,n);
+        const p_proj = new Vector3D(p.x - n.x * cos_n, 
+                                         p.y - n.y * cos_n, 
+                                         p.z - n.z * cos_n);
+
+        // Rotate point to xy-plane
+        var x = p_proj.x * (1 - n.x**2 / (1 + n.z)) - p_proj.y * (n.x*n.y / (1 + n.z)) - p_proj.z*n.x;
+        var y = -p_proj.x * (n.x*n.y / (1 + n.z)) + p_proj.y * (1 - n.y**2 / (1 + n.z)) - p_proj.z*n.y;
+
+        return {x: x, y: y};
+    }
+
+    function centerStartPoint(points, startX, startY) {
+        let dx = points[0].x - startX;
+        let dy = points[0].y - startY;
+
+        return points.map(p => ({x: p.x - dx, y: p.y -dy}));
+    }
+
+    function draw() {
+
+        ctx.clearRect(0,0,600,300)
+
+        let dir_vec = new Vector3D(Math.cos(t)*Math.cos(p),
+                                   Math.sin(t)*Math.cos(p),
+                                   Math.sin(p));
+        console.log(dir_vec);
+        console.log()
+        let points3D = lorentzPoints(10, 28, 8/3, 0.01, [0, 10], 10);
+        let points2D = points3D.map(p => projectPointToPlane(p, dir_vec));
+        points2D = centerStartPoint(points2D, 100, 100);
+        //console.log(points2D);
+
+        drawCatmullRomSpline(points2D);
+    }
+
+    draw();
+
    </script>
 </body>
 </html>
