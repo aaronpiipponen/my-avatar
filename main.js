@@ -58,7 +58,8 @@ function updateLorenz() {
 }
 
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0b0914";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (points3D.length < 3) return;
 

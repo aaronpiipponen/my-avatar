@@ -4,6 +4,8 @@ export function drawCatmullRomSpline(ctx, points, stroke_count) {
     if (points.length < 3) return;
 
     ctx.lineWidth = 3;
+    ctx.shadowColor = "rgba(120, 40, 200, 0.35)";
+    ctx.shadowBlur = 4;
 
     let gradient = (() => {
         let list = [];
@@ -26,26 +28,23 @@ export function drawCatmullRomSpline(ctx, points, stroke_count) {
         const cp2x = p2.x - (p3.x - p1.x) / 6;
         const cp2y = p2.y - (p3.y - p1.y) / 6;
 
-        if(i % stroke_count === 0)
-        {
-            if(i === 0) {
-                ctx.beginPath();
+        if (i % stroke_count === 0) {
+            if (i !== 0) {
+                ctx.stroke();
             }
+            ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
-            ctx.strokeStyle = `rgba(0,0,120,${gradient[i/stroke_count]})`;
-            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
 
-            if(i !== 0) {
-                ctx.stroke();
-                ctx.beginPath();
-            } else if(i == points.length - 1) {
-                ctx.stroke();
-            }
+            // Line style
+            const g = gradient[i / stroke_count];
+            ctx.lineWidth = Math.max(0.5, 3 * g);
+            ctx.strokeStyle = `hsla(${265 + g * 20}, 75%, ${25 + g * 28}%, ${g})`;
+
+            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
         } else {
             ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
         }
     }
-
 }
 
 export function centerScaleRender(points, centerX, centerY, scale) {
