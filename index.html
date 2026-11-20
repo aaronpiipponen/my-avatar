@@ -24,6 +24,15 @@
     let t = 0;
     let p = 0;
 
+    let sigma = 10;
+    let rho = 28;
+    let beta = 8/3;
+
+    let timestep = 0.01;
+    let timeinterval = [0, 100];
+
+    let stroke_count = 500;
+
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
@@ -56,9 +65,16 @@
 
     function drawCatmullRomSpline(points) {
         if (points.length < 3) return;
-        
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
+    
+        ctx.lineWidth = 3;
+
+        let gradient = (() => {
+            let list = [];
+            for (let i = points.length/stroke_count; i > 0; i--) {
+                list.push(i * stroke_count / points.length);
+            }
+            return list;
+        })();
 
         // Draw spline segments
         for (let i = 0; i < points.length - 1; i++) {
@@ -73,19 +89,31 @@
             const cp2x = p2.x - (p3.x - p1.x) / 6;
             const cp2y = p2.y - (p3.y - p1.y) / 6;
 
-            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+            if(i % stroke_count === 0)
+            {
+                if(i === 0) {
+                    ctx.beginPath();
+                }
+                ctx.moveTo(p1.x, p1.y);
+                ctx.strokeStyle = `rgba(0,0,120,${gradient[i/stroke_count]})`;
+                ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+
+                if(i !== 0) {
+                    ctx.stroke();
+                    ctx.beginPath();
+                }
+            } else {
+                ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+            }
         }
 
-        ctx.strokeStyle = "#4CAF50";
-        ctx.lineWidth = 3;
-        ctx.stroke();
     }
 
-    function lorentzPoints(s, r, b, dt, interval, scale) {
+    function lorentzPoints(s, r, b, dt, interval) {
         let t = interval[0];
-        let x = scale;
-        let y = scale;
-        let z = scale;
+        let x = 1;
+        let y = 1;
+        let z = 1;
         let points = [new Vector3D(x,y,z)];
 
         while(t < interval[1]) {
@@ -132,11 +160,16 @@
         return {x: x, y: y};
     }
 
-    function centerStartPoint(points, startX, startY) {
+    function centerScaleStartPoint(points, startX, startY, scale) {
+
+        // Scale
+        points = points.map(p => ({x: p.x*scale, y:p.y*scale}));
+
+        // Translate
         let dx = points[0].x - startX;
         let dy = points[0].y - startY;
 
-        return points.map(p => ({x: p.x - dx, y: p.y -dy}));
+        return points.map(p => ({x: p.x - dx, y: p.y - dy}));
     }
 
     function draw() {
@@ -146,12 +179,11 @@
         let dir_vec = new Vector3D(Math.cos(t)*Math.cos(p),
                                    Math.sin(t)*Math.cos(p),
                                    Math.sin(p));
-        console.log(dir_vec);
-        console.log()
-        let points3D = lorentzPoints(10, 28, 8/3, 0.01, [0, 10], 10);
+                            
+        
+        let points3D = lorentzPoints(sigma, rho, beta, timestep, timeinterval);
         let points2D = points3D.map(p => projectPointToPlane(p, dir_vec));
-        points2D = centerStartPoint(points2D, 100, 100);
-        //console.log(points2D);
+        points2D = centerScaleStartPoint(points2D, 300, 150, 3);
 
         drawCatmullRomSpline(points2D);
     }
