@@ -1,3 +1,5 @@
+import { Vector3D } from "./math3d.js";
+
 export function drawCatmullRomSpline(ctx, points, stroke_count) {
     if (points.length < 3) return;
 
@@ -62,4 +64,20 @@ export function centerScaleRender(points, centerX, centerY, scale) {
     console.log(mean);
 
     return points.map(p => ({x: p.x - mean.x + centerX, y: p.y - mean.y + centerY}));
+}
+
+export function updateViewAngle(da, db, u, v, n) 
+{
+    if (da !== 0) {
+        const u_new = u.multiply(Math.cos(da)).add(n.multiply(-Math.sin(da)));
+        const n_new = u.multiply(Math.sin(da)).add(n.multiply(Math.cos(da)));
+        u = u_new;
+        n = n_new;
+    } else {
+        const v_new = v.multiply(Math.cos(db)).add(n.multiply(-Math.sin(db)));
+        const n_new = v.multiply(Math.sin(db)).add(n.multiply(Math.cos(db)));
+        v = v_new;
+        n = n_new;
+    }
+    return { u, v, n };
 }
