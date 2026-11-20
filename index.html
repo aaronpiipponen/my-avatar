@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <title>Smooth Curve with Catmull-Rom Spline</title>
+   <style>
+      canvas {
+         border: 2px solid #333;
+         display: block;
+         margin: 20px auto;
+      }
+   </style>
+</head>
+<body>
+   <canvas id="canvas" width="600" height="300"></canvas>
+
+   <script>
+    class Point {
+        constructor(x, y, z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    function drawCatmullRomSpline(points) {
+        if (points.length < 3) return;
+        
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+
+        // Draw spline segments
+        for (let i = 0; i < points.length - 1; i++) {
+            const p0 = points[Math.max(i - 1, 0)];
+            const p1 = points[i];
+            const p2 = points[i + 1];
+            const p3 = points[Math.min(i + 2, points.length - 1)];
+
+            // Calculate control points for cubic Bezier curve
+            const cp1x = p1.x + (p2.x - p0.x) / 6;
+            const cp1y = p1.y + (p2.y - p0.y) / 6;
+            const cp2x = p2.x - (p3.x - p1.x) / 6;
+            const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+        }
+
+        ctx.strokeStyle = "#4CAF50";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+
+    function drawPoints(points) {
+        points.forEach((point, index) => {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = "#FF9800";
+            ctx.fill();
+            
+            ctx.fillStyle = "#000";
+            ctx.font = "12px Arial";
+            ctx.fillText(`P${index}`, point.x + 8, point.y - 8);
+        });
+    }
+
+    function lorentzPoints(s, r, b, dt, interval, startX, startY, startZ, scale) {
+        let t = interval[0];
+        let x = startX*scale;
+        let y = startY*scale;
+        let z = startZ*scale;
+        let points = [new Point(x+startX,y+startY,z+startZ)];
+
+        while(t < interval[1]) {
+
+            let dx = (s*(y - x)) * dt;
+            let dy = (x*(r - z) - y) * dt;
+            let dz = (x*y - b*z) * dt;
+
+            x += dx;
+            y += dy;
+            z += dz;
+
+            points.push(new Point(x+startX,y+startY,z+startZ));
+            
+            t += dt;
+        }
+
+        return points;
+    }
+
+    function projectPointToPlane(p, vec1, vec2) {
+        const dotp = vec1.x*vec2.x + vec1.y*vec2.y + vec1.z + vec2.z;
+        const vec1_length = Math.sqrt(vec1.x^2 + vec1.y^2 + vec1.z^2);
+        const vec2_length = Math.sqrt(vec2.x^2 + vec2.y^2 + vec2.z^2);
+        if (dotp == vec1_length + vec2_length) return;
+
+        // Currently just the xy plane always
+        return {x: p.x, y: p.y};
+
+        // TODO: general projection
+    }
+
+    points3D = lorentzPoints(10, 28, 8/3, 0.01, [0, 10], 100, 100, 100, 0.35);
+    points2D = points3D.map(p => projectPointToPlane(p, new Point(0,0,0), new Point(0,0,0)));
+    console.log(points2D);
+
+    drawCatmullRomSpline(points2D);
+    // drawPoints(points);
+   </script>
+</body>
+</html>
