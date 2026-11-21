@@ -1,5 +1,5 @@
 import { Vector3D, projectPointToPlane } from './math3d.js';
-import { lorentzPoints } from './lorenz.js';
+import { attractorPoints } from './attractors.js';
 import { centerScaleRender, drawCatmullRomSpline, updateViewAngle } from './renderer.js';
 import { setupControls } from './controls.js';
 import { exportCatmullRomSVG } from './export.js';
@@ -15,6 +15,7 @@ const sensitivity = 0.05;
 const strokeCount = 500;
 
 let points = [];
+let currentAttractor = "lorenz";
 
 // Simulation and Lorenz parameters
 const params = setupControls({
@@ -29,27 +30,34 @@ const params = setupControls({
     },
     onParamChange(key, value) {
         params[key] = value;
-        updateLorenz();
+        updateAttractor();
         draw();
     },
     onSimChange(key, value) {
         params[key] = value;
-        updateLorenz();
+        updateAttractor();
         draw();
     },
     onScaleChange(value) {
         params["scale"] = value;
         draw();
+    },
+    onAttractorChange(type, cfg) {
+        currentAttractor = type;
+        Object.assign(params, cfg);
+        updateAttractor();
+        draw();
     }
 });
 
-function updateLorenz() {
+function updateAttractor() {
     if (params.step <= 0 || params.stop <= params.start) {
         points = [];
         return;
     }
 
-    points = lorentzPoints(
+    points = attractorPoints(
+        currentAttractor,
         params.sigma,
         params.rho,
         params.beta,
@@ -84,11 +92,11 @@ document.getElementById("export-svg").onclick = () => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "lorenz-attractor.svg";
+    link.download = "attractor.svg";
     link.click();
 
     URL.revokeObjectURL(url);
 };
 // Initial simulation and render
-updateLorenz();
+updateAttractor();
 draw();

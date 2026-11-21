@@ -15,9 +15,12 @@ export function drawCatmullRomSpline(ctx, points, stroke_count) {
         return list;
     })();
 
-    const zValues = points.map(p => p.z);
-    const minZ = Math.min(...zValues);
-    const maxZ = Math.max(...zValues);
+    let minZ = Infinity;
+    let maxZ = -Infinity;
+    for (const p of points) {
+        if (p.z < minZ) minZ = p.z;
+        if (p.z > maxZ) maxZ = p.z;
+    }
     const zRange = maxZ - minZ || 1;
 
     // Draw spline segments
