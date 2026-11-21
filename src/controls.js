@@ -4,6 +4,7 @@ export function setupControls({ onViewChange, onParamChange, onSimChange, onScal
         if (label) label.textContent = value;
     };
 
+    // Presets
     const ATTRACTORS = {
         lorenz:  { a: 10,   b: 28,  c: 8 / 3, step: 0.01,  start: 0, stop: 100, scale: 10 },
         rossler: { a: 0.2,  b: 0.2, c: 5.7,   step: 0.05,  start: 0, stop: 400, scale: 14 },

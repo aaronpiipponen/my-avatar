@@ -19,6 +19,7 @@ let currentAttractor = "lorenz";
 
 // Simulation and Lorenz parameters
 const params = setupControls({
+    // Update only the necessary parts
     onViewChange(axis, delta) {
         const d = delta * sensitivity;
         const da = axis === "da" ? d : 0;

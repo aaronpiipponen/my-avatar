@@ -10,6 +10,7 @@ export function attractorPoints(type, a, b, c, dt, interval) {
 
     let points = [];
 
+    // Loop from -500 to 500 to "warm up" the attractor
     while (t < 500) {
         let dx = 0, dy = 0, dz = 0;
 
@@ -48,6 +49,7 @@ export function attractorPoints(type, a, b, c, dt, interval) {
 
         if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) break;
 
+        // Record only between the selected interval
         if (t >= interval[0] && t <= interval[1]) {
             const norm = type === "aizawa" ? 15 : 1;
             points.push(new Vector3D(x * norm, y * norm, z * norm));
