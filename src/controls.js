@@ -46,30 +46,30 @@ export function setupControls({ onViewChange, onParamChange, onSimChange, onScal
     };
 
     document.querySelectorAll("[data-attractor]").forEach(btn => {
-            btn.onclick = () => {
-                const type = btn.dataset.attractor;
-                const cfg = ATTRACTORS[type];
-                if (!cfg) return;
+        btn.onclick = () => {
+            const type = btn.dataset.attractor;
+            const cfg = ATTRACTORS[type];
+            if (!cfg) return;
 
-                const updates = [
-                    ["lorenz-sigma", cfg.sigma * 1000,  cfg.sigma],
-                    ["lorenz-rho",   cfg.rho * 1000,    cfg.rho],
-                    ["lorenz-beta",  cfg.beta * 1000,   cfg.beta],
-                    ["sim-step",     cfg.step * 10000,  cfg.step],
-                    ["sim-start",    cfg.start * 10,    cfg.start],
-                    ["sim-stop",     cfg.stop * 10,     cfg.stop],
-                    ["view-scale",   cfg.scale,         cfg.scale],
-                ];
+            const updates = [
+                ["lorenz-sigma", cfg.sigma * 1000,  cfg.sigma],
+                ["lorenz-rho",   cfg.rho * 1000,    cfg.rho],
+                ["lorenz-beta",  cfg.beta * 1000,   cfg.beta],
+                ["sim-step",     cfg.step * 10000,  cfg.step],
+                ["sim-start",    cfg.start * 10,    cfg.start],
+                ["sim-stop",     cfg.stop * 10,     cfg.stop],
+                ["view-scale",   cfg.scale,         cfg.scale],
+            ];
 
-                updates.forEach(([id, rawVal, displayVal]) => {
-                    const slider = document.getElementById(id);
-                    slider.value = Math.round(rawVal);
-                    updateLabel(id, Number(displayVal.toFixed(3)));
-                });
+            updates.forEach(([id, rawVal, displayVal]) => {
+                const slider = document.getElementById(id);
+                slider.value = Math.round(rawVal);
+                updateLabel(id, Number(displayVal.toFixed(3)));
+            });
 
-                onAttractorChange(type, cfg);
-            };
-        });
+            onAttractorChange(type, cfg);
+        };
+    });
 
     return {
         sigma: bindSlider("lorenz-sigma", 1000, val => onParamChange("sigma", val)),

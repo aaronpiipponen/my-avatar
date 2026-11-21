@@ -36,6 +36,7 @@ Chen and Aizawa attractors exported with **Export SVG**.
     ├── math3d.js
     ├── renderer.js
     ├── controls.js
+    ├── spline.js
     └── export.js
 ```
 
