@@ -9,11 +9,16 @@ export function drawCatmullRomSpline(ctx, points, stroke_count) {
 
     let gradient = (() => {
         let list = [];
-        for (let i = points.length/stroke_count; i > 0; i--) {
+        for (let i = 1; i <= points.length/stroke_count; i++) {
             list.push(i * stroke_count / points.length);
         }
         return list;
     })();
+
+    const zValues = points.map(p => p.z);
+    const minZ = Math.min(...zValues);
+    const maxZ = Math.max(...zValues);
+    const zRange = maxZ - minZ || 1;
 
     // Draw spline segments
     for (let i = 0; i < points.length - 1; i++) {
@@ -37,8 +42,9 @@ export function drawCatmullRomSpline(ctx, points, stroke_count) {
 
             // Line style
             const g = gradient[i / stroke_count];
-            ctx.lineWidth = Math.max(0.5, 3 * g);
-            ctx.strokeStyle = `hsla(${265 + g * 20}, 75%, ${25 + g * 28}%, ${g})`;
+            const depth = (p1.z - minZ) / zRange;
+            ctx.lineWidth = Math.max(0.5, (1.5 + depth * 2) * g);
+            ctx.strokeStyle = `hsla(${265 + g * 20}, 75%, ${18 + g * 22 + depth * 18}%, ${g * (0.45 + depth * 0.55)})`;
 
             ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
         } else {
@@ -50,7 +56,7 @@ export function drawCatmullRomSpline(ctx, points, stroke_count) {
 export function centerScaleRender(points, centerX, centerY, scale) {
 
     // Scale
-    points = points.map(p => ({x: p.x*scale, y: p.y*scale}));
+    points = points.map(p => ({x: p.x*scale, y: p.y*scale, z: p.z}));
 
     // Translate
     const mean = (points => {
@@ -62,7 +68,11 @@ export function centerScaleRender(points, centerX, centerY, scale) {
 
     console.log(mean);
 
-    return points.map(p => ({x: p.x - mean.x + centerX, y: p.y - mean.y + centerY}));
+    return points.map(p => ({
+        x: p.x - mean.x + centerX,
+        y: p.y - mean.y + centerY,
+        z: p.z
+    }));
 }
 
 export function updateViewAngle(da, db, dc, u, v, n) 

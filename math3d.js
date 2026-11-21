@@ -23,6 +23,10 @@ export function normalizeVector3D(u) {
     return new Vector3D(u.x/norm, u.y/norm, u.z/norm);
 }
 
-export function projectPointToPlane(p, u, v) {
-    return {x: dotProduct3D(p,u), y: dotProduct3D(p,v)};
+export function projectPointToPlane(p, u, v, n) {
+    return {
+        x: dotProduct3D(p, u),
+        y: dotProduct3D(p, v),
+        z: dotProduct3D(p, n)
+    };
 }
