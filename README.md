@@ -2,7 +2,7 @@
 
 Interactive 3D strange attractor visualizer and vector SVG exporter built to generate my GitHub profile picture.
 
-Written by hand as a math and graphics exercise. The UI styling was AI-assisted.
+Math and 3D graphics rendering written by hand as an exercise. The UI styling was AI-assisted.
 
 **[Live demo](https://aaronpiipponen.github.io/my-avatar/)**
 
@@ -10,7 +10,7 @@ Written by hand as a math and graphics exercise. The UI styling was AI-assisted.
 
 - Renders four 3D dynamical systems: Lorenz, Rössler, Chen, and Aizawa.
 - Projects 3D trajectories onto an orthographic view plane with incremental rotation along the X, Y, and Z axes and adjustable scale.
-- Adjusts system parameters (`σ`, `ρ`, `β`), Euler integration timestep size, and simulation time interval start and stop bounds.
+- Adjusts system parameters (`a`, `b`, `c`), Euler integration timestep size, and simulation time interval start and stop bounds.
 - Shades Catmull-Rom spline segments by trajectory progression and depth along the viewing normal vector.
 - Exports a centered square SVG (`600 px` by `600 px`) containing separate `glow-layer` and `core-layer` path groups.
 

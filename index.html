@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <title>Lorenz attractor</title>
+   <title>3D Strange Attractors</title>
    <script type="module" src="./src/main.js"></script>
    <link rel="stylesheet" href="./style.css">
 </head>
@@ -37,21 +37,21 @@
 
       <div class="column">
          <table>
-            <tr><th colspan="3">System controls</th></tr>
+            <tr><th colspan="3">System parameters</th></tr>
             <tr>
-               <td>σ (sigma)</td>
-               <td><input type="range" min="-100000" max="100000" value="10000" class="slider" id="lorenz-sigma"></td>
-               <td><span id="lorenz-sigma-val">10</span></td>
+               <td>a</td>
+               <td><input type="range" min="-100000" max="100000" value="10000" class="slider" id="attractor-a"></td>
+               <td><span id="attractor-a-val">10</span></td>
             </tr>
             <tr>
-               <td>ρ (rho)</td>
-               <td><input type="range" min="-100000" max="100000" value="28000" class="slider" id="lorenz-rho"></td>
-               <td><span id="lorenz-rho-val">28</span></td>
+               <td>b</td>
+               <td><input type="range" min="-100000" max="100000" value="28000" class="slider" id="attractor-b"></td>
+               <td><span id="attractor-b-val">28</span></td>
             </tr>
             <tr>
-               <td>β (beta)</td>
-               <td><input type="range" min="-100000" max="100000" value="2667" class="slider" id="lorenz-beta"></td>
-               <td><span id="lorenz-beta-val">2.667</span></td>
+               <td>c</td>
+               <td><input type="range" min="-100000" max="100000" value="2667" class="slider" id="attractor-c"></td>
+               <td><span id="attractor-c-val">2.667</span></td>
             </tr>
          </table>
       </div>

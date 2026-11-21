@@ -5,10 +5,10 @@ export function setupControls({ onViewChange, onParamChange, onSimChange, onScal
     };
 
     const ATTRACTORS = {
-        lorenz:  { sigma: 10,   rho: 28,  beta: 8 / 3, step: 0.01,  start: 0, stop: 100, scale: 10 },
-        rossler: { sigma: 0.2,  rho: 0.2, beta: 5.7,   step: 0.05,  start: 0, stop: 400, scale: 14 },
-        chen:    { sigma: 35,   rho: 3,   beta: 28,    step: 0.003, start: 0, stop: 60,  scale: 10 },
-        aizawa:  { sigma: 0.95, rho: 0.7, beta: 0.6,   step: 0.01,  start: 0, stop: 120, scale: 12 },
+        lorenz:  { a: 10,   b: 28,  c: 8 / 3, step: 0.01,  start: 0, stop: 100, scale: 10 },
+        rossler: { a: 0.2,  b: 0.2, c: 5.7,   step: 0.05,  start: 0, stop: 400, scale: 14 },
+        chen:    { a: 35,   b: 3,   c: 28,    step: 0.003, start: 0, stop: 60,  scale: 10 },
+        aizawa:  { a: 0.95, b: 0.7, c: 0.6,   step: 0.01,  start: 0, stop: 120, scale: 12 },
     };
 
     const viewAxes = [
@@ -52,9 +52,9 @@ export function setupControls({ onViewChange, onParamChange, onSimChange, onScal
             if (!cfg) return;
 
             const updates = [
-                ["lorenz-sigma", cfg.sigma * 1000,  cfg.sigma],
-                ["lorenz-rho",   cfg.rho * 1000,    cfg.rho],
-                ["lorenz-beta",  cfg.beta * 1000,   cfg.beta],
+                ["attractor-a",  cfg.a * 1000,      cfg.a],
+                ["attractor-b",  cfg.b * 1000,      cfg.b],
+                ["attractor-c",  cfg.c * 1000,      cfg.c],
                 ["sim-step",     cfg.step * 10000,  cfg.step],
                 ["sim-start",    cfg.start * 10,    cfg.start],
                 ["sim-stop",     cfg.stop * 10,     cfg.stop],
@@ -72,12 +72,12 @@ export function setupControls({ onViewChange, onParamChange, onSimChange, onScal
     });
 
     return {
-        sigma: bindSlider("lorenz-sigma", 1000, val => onParamChange("sigma", val)),
-        rho:   bindSlider("lorenz-rho",   1000, val => onParamChange("rho", val)),
-        beta:  bindSlider("lorenz-beta",  1000, val => onParamChange("beta", val)),
-        step:  bindSlider("sim-step",     10000,  val => onSimChange("step", val)),
+        a:     bindSlider("attractor-a",  1000,  val => onParamChange("a", val)),
+        b:     bindSlider("attractor-b",  1000,  val => onParamChange("b", val)),
+        c:     bindSlider("attractor-c",  1000,  val => onParamChange("c", val)),
+        step:  bindSlider("sim-step",     10000, val => onSimChange("step", val)),
         start: bindSlider("sim-start",    10,    val => onSimChange("start", val)),
         stop:  bindSlider("sim-stop",     10,    val => onSimChange("stop", val)),
-        scale: bindSlider("view-scale", 1, val => onScaleChange(val))
+        scale: bindSlider("view-scale",   1,     val => onScaleChange(val))
     };
 }

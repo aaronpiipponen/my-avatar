@@ -58,9 +58,9 @@ function updateAttractor() {
 
     points = attractorPoints(
         currentAttractor,
-        params.sigma,
-        params.rho,
-        params.beta,
+        params.a,
+        params.b,
+        params.c,
         params.step,
         [params.start, params.stop]
     );
