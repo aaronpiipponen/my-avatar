@@ -79,6 +79,6 @@ Integration always runs from `t = -500` to `t = 500`. Only points within the sta
 - **Blank canvas:** the canvas stays empty if the stop bound is not greater than the start bound or the trajectory diverges (integration halts at the first non-finite value). Reload a preset or the page to recover.
 - **View won't return to the original angle:** view sliders apply incremental rotations, and 3D rotations don't commute, so moving sliders back to `0` doesn't necessarily restore the starting view. Reload the page to reset.
 
-## Licence
+## License
 
 MIT
