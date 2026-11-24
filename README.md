@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/assets/logo.png" alt="my-avatar" width="360">
+  <img src="/assets/logo.png" alt="my-avatar" width="480">
 </p>
 
 <p align="center">
